@@ -1,0 +1,19 @@
+{
+  "package_name": "donortoken",
+  "version": "1.0.0",
+  "description": "Ethereum-backed tokens (coins) for donations to the deserving.",
+  "authors": [
+    "DonorToken"
+  ],
+  "keywords": [
+    "donortoken",
+    "donorcoin",
+    "solidity",
+    "ethereum",
+    "smart",
+    "contracts",
+    "security",
+    "zeppelin"
+  ],
+  "license": "MIT"
+}
