@@ -202,6 +202,7 @@ contract BasicToken is ERC20Basic {
   */
   function transfer(address _to, uint256 _value) public returns (bool) {
     require(_to != address(0));
+    require(_value <= balances[msg.sender]);
 
     // SafeMath.sub will throw if there is not enough balance.
     balances[msg.sender] = balances[msg.sender].sub(_value);
@@ -230,7 +231,7 @@ contract ERC20 is ERC20Basic {
 
 contract StandardToken is ERC20, BasicToken {
 
-  mapping (address => mapping (address => uint256)) allowed;
+  mapping (address => mapping (address => uint256)) internal allowed;
 
 
   /**
@@ -241,15 +242,12 @@ contract StandardToken is ERC20, BasicToken {
    */
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
     require(_to != address(0));
-
-    uint256 _allowance = allowed[_from][msg.sender];
-
-    // Check is not needed because sub(_allowance, _value) will already throw if this condition is not met
-    // require (_value <= _allowance);
+    require(_value <= balances[_from]);
+    require(_value <= allowed[_from][msg.sender]);
 
     balances[_from] = balances[_from].sub(_value);
     balances[_to] = balances[_to].add(_value);
-    allowed[_from][msg.sender] = _allowance.sub(_value);
+    allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
     Transfer(_from, _to, _value);
     return true;
   }
@@ -286,15 +284,13 @@ contract StandardToken is ERC20, BasicToken {
    * the first transaction is mined)
    * From MonolithDAO Token.sol
    */
-  function increaseApproval (address _spender, uint _addedValue)
-    returns (bool success) {
+  function increaseApproval (address _spender, uint _addedValue) public returns (bool success) {
     allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);
     Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
     return true;
   }
 
-  function decreaseApproval (address _spender, uint _subtractedValue)
-    returns (bool success) {
+  function decreaseApproval (address _spender, uint _subtractedValue) public returns (bool success) {
     uint oldValue = allowed[msg.sender][_spender];
     if (_subtractedValue > oldValue) {
       allowed[msg.sender][_spender] = 0;
@@ -352,11 +348,11 @@ contract ERC23Contract is ERC23ContractInterface {
 
  /**
   * @dev Reject all ERC23 compatible tokens
-  * @param _from address that is transferring the tokens
-  * @param _value amount of specified token
-  * @param _data bytes data passed from the caller
+  * param _from address that is transferring the tokens
+  * param _value amount of specified token
+  * param _data bytes data passed from the caller
   */
-  function tokenFallback(address _from, uint256 _value, bytes _data) external {
+  function tokenFallback(address /*_from*/, uint256 /*_value*/, bytes /*_data*/) external {
     revert();
   }
 
@@ -383,6 +379,17 @@ contract ERC677Contract is ERC677ContractInterface {
     return true;
   }
 
+}
+
+library Lib {
+  // whether given address is a contract or not based on bytecode
+  function isContract(address addr) internal constant returns (bool) {
+    uint size;
+    assembly {
+      size := extcodesize(addr)
+    }
+    return (size > 1); // testing returned size "1" for non-contract accounts, so we're using that.
+  }
 }
 
 contract Benable is Ownable {
@@ -601,7 +608,7 @@ contract DonorCrowdsale is Crowdsale, CappedCrowdsale, Benable, Devable, ERC23Co
   }
 
   // Overrides base ERC23Contract to accept ERC23 compatible tokens
-  function tokenFallback(address _from, uint256 _value, bytes _data) external {
+  function tokenFallback(address /*_from*/, uint256 /*_value*/, bytes /*_data*/) external {
     // may have received transfer from ERC23Token.transfer, which calls tokenFallback, so check
     tokenSweep(0x0, msg.sender);
   }
@@ -701,7 +708,7 @@ contract ERC23Token is BasicToken, ERC23Contract {
   function transfer(address _to, uint256 _value, bytes _data) public returns (bool success) {
     super.transfer(_to, _value);
 
-    if (isContract(_to)) {
+    if (Lib.isContract(_to)) {
       ERC23ContractInterface receiver = ERC23ContractInterface(_to);
       receiver.tokenFallback(msg.sender, _value, _data);
     }
@@ -714,15 +721,6 @@ contract ERC23Token is BasicToken, ERC23Contract {
   function transfer(address _to, uint256 _value) public returns (bool success) {
     bytes memory empty;
     return transfer(_to, _value, empty);
-  }
-
-  // whether given address is a contract or not based on bytecode
-  function isContract(address _addr) internal constant returns (bool success) {
-    uint256 length = 0;
-    assembly {
-      length := extcodesize(_addr)
-    }
-    return (length > 1); // testing returned size "1" for non-contract accounts, so we're gonna use that.
   }
 }
 

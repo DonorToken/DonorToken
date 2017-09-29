@@ -11,9 +11,4 @@ contract SampleERC23Token is ERC23Token {
     totalSupply = initialBalance;
   }
 
-  // public exposer
-  function isContractExposer(address _addr) public constant returns (bool success) {
-    return super.isContract(_addr);
-  }
-
 }

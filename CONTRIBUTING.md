@@ -82,8 +82,8 @@ git checkout -b remove/some-file
 
 We expect pull requests to be rebased to the master branch before merging:
 ```sh
-git remote add doto git@github.com:DonorToken/DonorToken.git
-git pull --rebase doto master
+git remote add upstream git@github.com:DonorToken/DonorToken.git
+git pull --rebase upstream master
 ```
 
 Note that we require rebasing your branch instead of merging it, for commit readability reasons.

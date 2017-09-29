@@ -35,7 +35,7 @@ If you find a security issue, please email [dev@DonorToken.com](mailto:dev@Donor
 ## Contributing
 - [Issue tracker](https://github.com/DonorToken/DonorToken/issues)
 - [Contribution guidelines](CONTRIBUTING.md)
-- Dev fund (ETH): 0x2F6dA3986a36f8dBd559b94CF9D6857779b429E2
+- Dev fund (ETH): 0x2F6dA3986a36f8dBd559b94CF9D6857779b429E2 or donortoken.eth
 
 ## DonorTokens
 - [MEWT](https://github.com/DonorToken/MEWT)

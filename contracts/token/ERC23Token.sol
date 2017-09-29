@@ -2,6 +2,7 @@ pragma solidity ^0.4.13;
 
 import "zeppelin-solidity/contracts/token/BasicToken.sol";
 import "../base/ERC23Contract.sol";
+import "../base/Lib.sol";
 
 
 // implements ERC23
@@ -18,7 +19,7 @@ contract ERC23Token is BasicToken, ERC23Contract {
   function transfer(address _to, uint256 _value, bytes _data) public returns (bool success) {
     super.transfer(_to, _value);
 
-    if (isContract(_to)) {
+    if (Lib.isContract(_to)) {
       ERC23ContractInterface receiver = ERC23ContractInterface(_to);
       receiver.tokenFallback(msg.sender, _value, _data);
     }
@@ -31,14 +32,5 @@ contract ERC23Token is BasicToken, ERC23Contract {
   function transfer(address _to, uint256 _value) public returns (bool success) {
     bytes memory empty;
     return transfer(_to, _value, empty);
-  }
-
-  // whether given address is a contract or not based on bytecode
-  function isContract(address _addr) internal constant returns (bool success) {
-    uint256 length = 0;
-    assembly {
-      length := extcodesize(_addr)
-    }
-    return (length > 1); // testing returned size "1" for non-contract accounts, so we're gonna use that.
   }
 }

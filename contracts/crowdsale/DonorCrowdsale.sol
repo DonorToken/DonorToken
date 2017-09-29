@@ -158,7 +158,7 @@ contract DonorCrowdsale is Crowdsale, CappedCrowdsale, Benable, Devable, ERC23Co
   }
 
   // Overrides base ERC23Contract to accept ERC23 compatible tokens
-  function tokenFallback(address _from, uint256 _value, bytes _data) external {
+  function tokenFallback(address /*_from*/, uint256 /*_value*/, bytes /*_data*/) external {
     // may have received transfer from ERC23Token.transfer, which calls tokenFallback, so check
     tokenSweep(0x0, msg.sender);
   }

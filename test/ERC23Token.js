@@ -25,14 +25,4 @@ contract('ERC23Token', function(accounts) {
     assert.equal(transfer.logs[1].args.from.valueOf(), accounts[0]);
   });
 
-  it("should return correct isContract() values", async function(){
-    (await token.isContractExposer(token.address)).should.equal(true);
-    (await token.isContractExposer(accounts[0])).should.equal(false);
-
-    // let c1 = await token.isContractExposer(token.address);
-    // console.log(c1);
-    // let c2 = await token.isContractExposer(accounts[0]);
-    // console.log(c2);
-  });
-
 });
