@@ -13,8 +13,7 @@ import "../base/Lib.sol";
 // https://github.com/Opus-foundation/contracts/blob/master/contracts/ERC23BasicToken.sol
 contract ERC23Token is BasicToken, ERC23Contract {
 
-  // errors out if named "Transfer", or if "bytes data" is indexed :(
-  event TransferERC23(address indexed from, address indexed to, uint256 value, bytes /*indexed*/ data);
+  event Transfer(address indexed from, address indexed to, uint256 value, bytes /*indexed*/ data);
 
   function transfer(address _to, uint256 _value, bytes _data) public returns (bool success) {
     super.transfer(_to, _value);
@@ -24,7 +23,7 @@ contract ERC23Token is BasicToken, ERC23Contract {
       receiver.tokenFallback(msg.sender, _value, _data);
     }
 
-    TransferERC23(msg.sender, _to, _value, _data);
+    Transfer(msg.sender, _to, _value, _data);
     return true;
   }
 

@@ -21,8 +21,8 @@ contract('ERC23Token', function(accounts) {
 
     // ERC23Token tests
     assert.equal(transfer.logs[0].event, 'Transfer');
-    assert.equal(transfer.logs[1].event, 'TransferERC23');
-    assert.equal(transfer.logs[1].args.from.valueOf(), accounts[0]);
+    assert.equal(transfer.logs[0].args.from.valueOf(), accounts[0]);
+    assert.equal(Object.keys(transfer.logs[0].args).length, 4);
   });
 
 });
